@@ -27,7 +27,7 @@ This will create an executable JAR file in the `target` directory.
 ### Basic Usage
 
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar field=value field2=value2
+java -jar target/result-json-map-cli.jar field=value field2=value2
 ```
 
 Output:
@@ -40,7 +40,7 @@ Output:
 The CLI also supports colon (`:`) as a delimiter:
 
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar name:John age:30 city:New York
+java -jar target/result-json-map-cli.jar name:John age:30 city:New York
 ```
 
 Output:
@@ -53,7 +53,7 @@ Output:
 You can mix both `=` and `:` delimiters:
 
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar name=John age:30 city=New York
+java -jar target/result-json-map-cli.jar name=John age:30 city=New York
 ```
 
 ### Values with Spaces
@@ -61,17 +61,17 @@ java -jar target/field-value-pairs-cli-1.0.0.jar name=John age:30 city=New York
 Values containing spaces are supported:
 
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar name="John Doe" email=john@example.com
+java -jar target/result-json-map-cli.jar name="John Doe" email=john@example.com
 ```
 
 ### Help and Version
 
 ```bash
 # Show help
-java -jar target/field-value-pairs-cli-1.0.0.jar --help
+java -jar target/result-json-map-cli.jar --help
 
 # Show version
-java -jar target/field-value-pairs-cli-1.0.0.jar --version
+java -jar target/result-json-map-cli.jar --version
 ```
 
 ## Running Tests
@@ -84,7 +84,7 @@ mvn test
 
 ### Example 1: Simple field-value pairs
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar name=Alice age=25
+java -jar target/result-json-map-cli.jar name=Alice age=25
 ```
 Output:
 ```xml
@@ -93,7 +93,7 @@ Output:
 
 ### Example 2: Multiple pairs with special characters
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar email=user@example.com path=/home/user/file.txt
+java -jar target/result-json-map-cli.jar email=user@example.com path=/home/user/file.txt
 ```
 Output:
 ```xml
@@ -102,7 +102,7 @@ Output:
 
 ### Example 3: Using colon delimiter
 ```bash
-java -jar target/field-value-pairs-cli-1.0.0.jar name:Bob city:San Francisco
+java -jar target/result-json-map-cli.jar name:Bob city:San Francisco
 ```
 Output:
 ```xml
