@@ -142,5 +142,5 @@ The CLI validates input and provides error messages for:
 - **Java 21**: Programming language
 - **Maven**: Build tool and dependency management
 - **Picocli 4.7.5**: CLI framework
-- **Gson 2.10.1**: JSON processing
+- **Jackson 2.16.1**: JSON processing
 - **JUnit 5**: Testing framework

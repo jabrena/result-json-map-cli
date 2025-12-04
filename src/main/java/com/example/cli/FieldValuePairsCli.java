@@ -1,6 +1,6 @@
 package com.example.cli;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -82,9 +82,9 @@ public class FieldValuePairsCli implements Callable<Integer> {
         return map;
     }
 
-    private String convertToJson(Map<String, String> map) {
-        Gson gson = new Gson();
-        return gson.toJson(map);
+    private String convertToJson(Map<String, String> map) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(map);
     }
 
     private String wrapInResultTag(String json) {
