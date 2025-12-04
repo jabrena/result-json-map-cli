@@ -186,13 +186,13 @@ The CLI validates input and provides error messages for:
     │       └── com/
     │           └── example/
     │               └── cli/
-    │                   └── FieldValuePairsCli.java
+    │                   └── ResultGeneratorCli.java
     └── test/
         └── java/
             └── com/
                 └── example/
                     └── cli/
-                        └── FieldValuePairsCliTest.java
+                        └── ResultGeneratorCliTest.java
 ```
 
 ## Technologies Used

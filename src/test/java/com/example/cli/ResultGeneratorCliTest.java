@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FieldValuePairsCliTest {
+class ResultGeneratorCliTest {
 
     private ByteArrayOutputStream outContent;
     private ByteArrayOutputStream errContent;
@@ -36,7 +36,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testSingleFieldValuePair() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("name=John");
@@ -50,7 +50,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testMultipleFieldValuePairs() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("field=value", "field2=value2", "field3=value3");
@@ -66,7 +66,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testColonDelimiter() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("name:John", "age:30");
@@ -81,7 +81,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testMixedDelimiters() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("name=John", "age:30", "city=New York");
@@ -97,7 +97,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testValueWithSpaces() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("name=John Doe", "city=New York");
@@ -110,7 +110,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testValueWithSpecialCharacters() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("email=user@example.com", "path=/home/user/file.txt");
@@ -123,7 +123,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testEmptyValue() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("field=");
@@ -135,7 +135,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testInvalidPairFormat() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("invalidpair");
@@ -148,7 +148,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testEmptyFieldName() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("=value");
@@ -161,7 +161,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testHelpOption() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("--help");
@@ -174,7 +174,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testVersionOption() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("--version");
@@ -186,7 +186,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testNoArguments() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute();
@@ -197,7 +197,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testJsonStructure() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("field=value", "field2=value2");
@@ -218,7 +218,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testWhitespaceTrimming() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("  field  =  value  ", "  field2  :  value2  ");
@@ -231,7 +231,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testNumericIntegerValue() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("age=25", "count=100");
@@ -247,7 +247,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testNumericDecimalValue() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("price=19.99", "temperature=-5.5");
@@ -262,7 +262,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testQuotedNumericValue() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("code=\"123\"", "id='456'");
@@ -276,7 +276,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testMixedNumericAndStringValues() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("name=John", "age=30", "price=19.99", "city=New York");
@@ -295,7 +295,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testNegativeNumbers() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("temperature=-10", "balance=-123.45");
@@ -309,7 +309,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testLargeInteger() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("small=100", "large=3000000000");
@@ -325,7 +325,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandBasic() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "field", "value", "field2", "value2");
@@ -340,7 +340,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandWithQuotedFields() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "\"field\"", "30", "\"field2\"", "\"John\"");
@@ -356,7 +356,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandWithNumericValues() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "age", "25", "price", "19.99", "count", "100");
@@ -374,7 +374,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandWithMixedTypes() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "name", "John", "age", "30", "active", "true");
@@ -390,7 +390,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandWithQuotedStringValues() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "field", "\"John\"", "field2", "30");
@@ -406,7 +406,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandOddNumberOfArguments() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "field", "value", "field2");
@@ -419,7 +419,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandSinglePair() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "name", "Alice");
@@ -431,7 +431,7 @@ class FieldValuePairsCliTest {
 
     @Test
     void testBuildCommandEmptyFieldName() {
-        FieldValuePairsCli cli = new FieldValuePairsCli();
+        ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
         
         int exitCode = cmd.execute("build", "\"\"", "value");

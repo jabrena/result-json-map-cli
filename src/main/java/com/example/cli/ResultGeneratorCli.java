@@ -17,7 +17,7 @@ import java.util.concurrent.Callable;
     version = "1.0.0",
     subcommands = {BuildCommand.class}
 )
-public class FieldValuePairsCli implements Callable<Integer> {
+public class ResultGeneratorCli implements Callable<Integer> {
 
     @Parameters(
         index = "0..*",
@@ -126,7 +126,7 @@ public class FieldValuePairsCli implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new FieldValuePairsCli()).execute(args);
+        int exitCode = new CommandLine(new ResultGeneratorCli()).execute(args);
         System.exit(exitCode);
     }
 }
@@ -153,7 +153,7 @@ class BuildCommand implements Callable<Integer> {
                 );
             }
 
-            FieldValuePairsCli parent = new FieldValuePairsCli();
+            ResultGeneratorCli parent = new ResultGeneratorCli();
             Map<String, Object> fieldValueMap = parseAlternatingPairs(args, parent);
             String jsonOutput = parent.convertToJson(fieldValueMap);
             String result = parent.wrapInResultTag(jsonOutput);
@@ -165,7 +165,7 @@ class BuildCommand implements Callable<Integer> {
         }
     }
 
-    private Map<String, Object> parseAlternatingPairs(String[] args, FieldValuePairsCli parent) {
+    private Map<String, Object> parseAlternatingPairs(String[] args, ResultGeneratorCli parent) {
         Map<String, Object> map = new HashMap<>();
         
         for (int i = 0; i < args.length; i += 2) {

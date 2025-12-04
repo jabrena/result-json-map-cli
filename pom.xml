@@ -98,7 +98,7 @@
                             <finalName>result-json-map-cli</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.example.cli.FieldValuePairsCli</mainClass>
+                                    <mainClass>com.example.cli.ResultGeneratorCli</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
