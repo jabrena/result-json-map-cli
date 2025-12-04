@@ -322,4 +322,123 @@ class FieldValuePairsCliTest {
         assertFalse(output.contains("\"small\":\"100\""));
         assertFalse(output.contains("\"large\":\"3000000000\""));
     }
+
+    @Test
+    void testBuildCommandBasic() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "field", "value", "field2", "value2");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        assertTrue(output.startsWith("<result>"));
+        assertTrue(output.endsWith("</result>"));
+        assertTrue(output.contains("\"field\":\"value\""));
+        assertTrue(output.contains("\"field2\":\"value2\""));
+    }
+
+    @Test
+    void testBuildCommandWithQuotedFields() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "\"field\"", "30", "\"field2\"", "\"John\"");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Numeric value should not have quotes
+        assertTrue(output.contains("\"field\":30"));
+        assertFalse(output.contains("\"field\":\"30\""));
+        // Quoted string value should have quotes
+        assertTrue(output.contains("\"field2\":\"John\""));
+    }
+
+    @Test
+    void testBuildCommandWithNumericValues() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "age", "25", "price", "19.99", "count", "100");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // All numeric values should not have quotes
+        assertTrue(output.contains("\"age\":25"));
+        assertFalse(output.contains("\"age\":\"25\""));
+        assertTrue(output.contains("\"price\":19.99"));
+        assertFalse(output.contains("\"price\":\"19.99\""));
+        assertTrue(output.contains("\"count\":100"));
+        assertFalse(output.contains("\"count\":\"100\""));
+    }
+
+    @Test
+    void testBuildCommandWithMixedTypes() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "name", "John", "age", "30", "active", "true");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        assertTrue(output.contains("\"name\":\"John\""));
+        assertTrue(output.contains("\"age\":30"));
+        assertFalse(output.contains("\"age\":\"30\""));
+        // "true" is not a number, so it should be a string
+        assertTrue(output.contains("\"active\":\"true\""));
+    }
+
+    @Test
+    void testBuildCommandWithQuotedStringValues() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "field", "\"John\"", "field2", "30");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Quoted string should remain as string
+        assertTrue(output.contains("\"field\":\"John\""));
+        // Unquoted number should be numeric
+        assertTrue(output.contains("\"field2\":30"));
+        assertFalse(output.contains("\"field2\":\"30\""));
+    }
+
+    @Test
+    void testBuildCommandOddNumberOfArguments() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "field", "value", "field2");
+        
+        assertEquals(1, exitCode);
+        String errorOutput = errContent.toString();
+        assertTrue(errorOutput.contains("Error"));
+        assertTrue(errorOutput.contains("even number of arguments"));
+    }
+
+    @Test
+    void testBuildCommandSinglePair() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "name", "Alice");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        assertTrue(output.contains("\"name\":\"Alice\""));
+    }
+
+    @Test
+    void testBuildCommandEmptyFieldName() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("build", "\"\"", "value");
+        
+        assertEquals(1, exitCode);
+        String errorOutput = errContent.toString();
+        assertTrue(errorOutput.contains("Error"));
+        assertTrue(errorOutput.contains("Field name cannot be empty"));
+    }
 }

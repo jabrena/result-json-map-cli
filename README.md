@@ -24,7 +24,11 @@ This will create an executable JAR file in the `target` directory.
 
 ## Usage
 
-### Basic Usage
+The CLI supports two modes of operation:
+
+### Mode 1: Key-Value Pairs with Delimiters
+
+Use `=` or `:` to separate field names and values:
 
 ```bash
 java -jar target/result-json-map-cli.jar field=value field2=value2
@@ -34,6 +38,21 @@ Output:
 ```xml
 <result>{"field":"value","field2":"value2"}</result>
 ```
+
+### Mode 2: Build Command with Alternating Arguments
+
+Use the `build` subcommand with alternating field names and values:
+
+```bash
+java -jar target/result-json-map-cli.jar build "field" 30 "field2" "John"
+```
+
+Output:
+```xml
+<result>{"field":30,"field2":"John"}</result>
+```
+
+Notice that numeric values (like `30`) are output without quotes, while string values (like `"John"`) have quotes.
 
 ### Using Colon Delimiter
 
@@ -45,8 +64,10 @@ java -jar target/result-json-map-cli.jar name:John age:30 city:New York
 
 Output:
 ```xml
-<result>{"name":"John","age":"30","city":"New York"}</result>
+<result>{"name":"John","age":30,"city":"New York"}</result>
 ```
+
+Notice that `age:30` produces a numeric value (without quotes) because 30 is a number.
 
 ### Mixed Delimiters
 
@@ -134,6 +155,17 @@ Output:
 ```
 
 Notice that numeric values (`age`, `price`, `balance`) are output without quotes, while string values (`name`) have quotes.
+
+### Example 5: Using build command
+```bash
+java -jar target/result-json-map-cli.jar build "name" "Alice" "age" 25 "price" 19.99
+```
+Output:
+```xml
+<result>{"name":"Alice","age":25,"price":19.99}</result>
+```
+
+Field names can be quoted or unquoted. Values are parsed as numbers if they're numeric and unquoted.
 
 ## Error Handling
 

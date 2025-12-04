@@ -14,7 +14,8 @@ import java.util.concurrent.Callable;
     name = "field-value-cli",
     description = "CLI tool that accepts field-value pairs and returns JSON structure",
     mixinStandardHelpOptions = true,
-    version = "1.0.0"
+    version = "1.0.0",
+    subcommands = {BuildCommand.class}
 )
 public class FieldValuePairsCli implements Callable<Integer> {
 
@@ -83,7 +84,7 @@ public class FieldValuePairsCli implements Callable<Integer> {
         return map;
     }
 
-    private Object parseValue(String value) {
+    protected Object parseValue(String value) {
         // Check if value is quoted (starts and ends with quotes)
         if ((value.startsWith("\"") && value.endsWith("\"")) || 
             (value.startsWith("'") && value.endsWith("'"))) {
@@ -115,17 +116,78 @@ public class FieldValuePairsCli implements Callable<Integer> {
         }
     }
 
-    private String convertToJson(Map<String, Object> map) throws Exception {
+    protected String convertToJson(Map<String, Object> map) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(map);
     }
 
-    private String wrapInResultTag(String json) {
+    protected String wrapInResultTag(String json) {
         return "<result>" + json + "</result>";
     }
 
     public static void main(String[] args) {
         int exitCode = new CommandLine(new FieldValuePairsCli()).execute(args);
         System.exit(exitCode);
+    }
+}
+
+@Command(
+    name = "build",
+    description = "Build JSON structure from alternating field names and values"
+)
+class BuildCommand implements Callable<Integer> {
+
+    @Parameters(
+        index = "0..*",
+        description = "Alternating field names and values: field1 value1 field2 value2 ...",
+        arity = "2..*"
+    )
+    private String[] args;
+
+    @Override
+    public Integer call() {
+        try {
+            if (args.length % 2 != 0) {
+                throw new IllegalArgumentException(
+                    "Invalid number of arguments. Expected even number of arguments (field-value pairs)."
+                );
+            }
+
+            FieldValuePairsCli parent = new FieldValuePairsCli();
+            Map<String, Object> fieldValueMap = parseAlternatingPairs(args, parent);
+            String jsonOutput = parent.convertToJson(fieldValueMap);
+            String result = parent.wrapInResultTag(jsonOutput);
+            System.out.println(result);
+            return 0;
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            return 1;
+        }
+    }
+
+    private Map<String, Object> parseAlternatingPairs(String[] args, FieldValuePairsCli parent) {
+        Map<String, Object> map = new HashMap<>();
+        
+        for (int i = 0; i < args.length; i += 2) {
+            String field = removeQuotes(args[i].trim());
+            String value = args[i + 1].trim();
+            
+            if (field.isEmpty()) {
+                throw new IllegalArgumentException("Field name cannot be empty at position " + (i + 1));
+            }
+            
+            Object parsedValue = parent.parseValue(value);
+            map.put(field, parsedValue);
+        }
+        
+        return map;
+    }
+
+    private String removeQuotes(String str) {
+        if ((str.startsWith("\"") && str.endsWith("\"")) || 
+            (str.startsWith("'") && str.endsWith("'"))) {
+            return str.substring(1, str.length() - 1);
+        }
+        return str;
     }
 }
