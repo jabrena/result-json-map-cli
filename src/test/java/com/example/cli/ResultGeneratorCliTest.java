@@ -181,7 +181,7 @@ class ResultGeneratorCliTest {
         
         assertEquals(0, exitCode);
         String output = outContent.toString();
-        assertTrue(output.contains("1.0.0"));
+        assertTrue(output.contains("0.1.0-SNAPSHOT"));
     }
 
     @Test

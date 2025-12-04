@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
     name = "field-value-cli",
     description = "CLI tool that accepts field-value pairs and returns JSON structure",
     mixinStandardHelpOptions = true,
-    version = "1.0.0",
+    version = "0.1.0-SNAPSHOT",
     subcommands = {BuildCommand.class}
 )
 public class ResultGeneratorCli implements Callable<Integer> {
