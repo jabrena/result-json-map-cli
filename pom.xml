@@ -95,7 +95,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>result-json-map-cli</finalName>
+                            <finalName>result-json-map-cli-${project.version}</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.example.cli.ResultGeneratorCli</mainClass>

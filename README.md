@@ -20,7 +20,7 @@ The CLI outputs field-value pairs in the following format:
 mvn clean package
 ```
 
-This will create an executable JAR file in the `target` directory.
+This will create an executable JAR file named `result-json-map-cli-1.0.0.jar` in the `target` directory.
 
 ## Usage
 
@@ -31,7 +31,7 @@ The CLI supports two modes of operation:
 Use `=` or `:` to separate field names and values:
 
 ```bash
-java -jar target/result-json-map-cli.jar field=value field2=value2
+java -jar target/result-json-map-cli-1.0.0.jar field=value field2=value2
 ```
 
 Output:
@@ -44,7 +44,7 @@ Output:
 Use the `build` subcommand with alternating field names and values:
 
 ```bash
-java -jar target/result-json-map-cli.jar build "field" 30 "field2" "John"
+java -jar target/result-json-map-cli-1.0.0.jar build "field" 30 "field2" "John"
 ```
 
 Output:
@@ -59,7 +59,7 @@ Notice that numeric values (like `30`) are output without quotes, while string v
 The CLI also supports colon (`:`) as a delimiter:
 
 ```bash
-java -jar target/result-json-map-cli.jar name:John age:30 city:New York
+java -jar target/result-json-map-cli-1.0.0.jar name:John age:30 city:New York
 ```
 
 Output:
@@ -74,7 +74,7 @@ Notice that `age:30` produces a numeric value (without quotes) because 30 is a n
 You can mix both `=` and `:` delimiters:
 
 ```bash
-java -jar target/result-json-map-cli.jar name=John age:30 city=New York
+java -jar target/result-json-map-cli-1.0.0.jar name=John age:30 city=New York
 ```
 
 ### Values with Spaces
@@ -82,7 +82,7 @@ java -jar target/result-json-map-cli.jar name=John age:30 city=New York
 Values containing spaces are supported:
 
 ```bash
-java -jar target/result-json-map-cli.jar name="John Doe" email=john@example.com
+java -jar target/result-json-map-cli-1.0.0.jar name="John Doe" email=john@example.com
 ```
 
 ### Numeric Values
@@ -90,7 +90,7 @@ java -jar target/result-json-map-cli.jar name="John Doe" email=john@example.com
 Numeric values (integers and decimals) are automatically detected and output without quotes. If you want a numeric value to be treated as a string, wrap it in quotes:
 
 ```bash
-java -jar target/result-json-map-cli.jar age=30 price=19.99 code="123"
+java -jar target/result-json-map-cli-1.0.0.jar age=30 price=19.99 code="123"
 ```
 
 Output:
@@ -104,10 +104,10 @@ Notice that `age` and `price` are numeric (without quotes), while `code` is a st
 
 ```bash
 # Show help
-java -jar target/result-json-map-cli.jar --help
+java -jar target/result-json-map-cli-1.0.0.jar --help
 
 # Show version
-java -jar target/result-json-map-cli.jar --version
+java -jar target/result-json-map-cli-1.0.0.jar --version
 ```
 
 ## Running Tests
@@ -120,7 +120,7 @@ mvn test
 
 ### Example 1: Simple field-value pairs
 ```bash
-java -jar target/result-json-map-cli.jar name=Alice age=25
+java -jar target/result-json-map-cli-1.0.0.jar name=Alice age=25
 ```
 Output:
 ```xml
@@ -129,7 +129,7 @@ Output:
 
 ### Example 2: Multiple pairs with special characters
 ```bash
-java -jar target/result-json-map-cli.jar email=user@example.com path=/home/user/file.txt
+java -jar target/result-json-map-cli-1.0.0.jar email=user@example.com path=/home/user/file.txt
 ```
 Output:
 ```xml
@@ -138,7 +138,7 @@ Output:
 
 ### Example 3: Using colon delimiter
 ```bash
-java -jar target/result-json-map-cli.jar name:Bob city:San Francisco
+java -jar target/result-json-map-cli-1.0.0.jar name:Bob city:San Francisco
 ```
 Output:
 ```xml
@@ -147,7 +147,7 @@ Output:
 
 ### Example 4: Numeric values
 ```bash
-java -jar target/result-json-map-cli.jar name=Alice age=25 price=19.99 balance=-100.50
+java -jar target/result-json-map-cli-1.0.0.jar name=Alice age=25 price=19.99 balance=-100.50
 ```
 Output:
 ```xml
@@ -158,7 +158,7 @@ Notice that numeric values (`age`, `price`, `balance`) are output without quotes
 
 ### Example 5: Using build command
 ```bash
-java -jar target/result-json-map-cli.jar build "name" "Alice" "age" 25 "price" 19.99
+java -jar target/result-json-map-cli-1.0.0.jar build "name" "Alice" "age" 25 "price" 19.99
 ```
 Output:
 ```xml
