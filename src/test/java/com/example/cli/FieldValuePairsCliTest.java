@@ -74,7 +74,9 @@ class FieldValuePairsCliTest {
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John\""));
-        assertTrue(output.contains("\"age\":\"30\""));
+        // Age should be numeric (without quotes)
+        assertTrue(output.contains("\"age\":30"));
+        assertFalse(output.contains("\"age\":\"30\""));
     }
 
     @Test
@@ -87,7 +89,9 @@ class FieldValuePairsCliTest {
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John\""));
-        assertTrue(output.contains("\"age\":\"30\""));
+        // Age should be numeric (without quotes)
+        assertTrue(output.contains("\"age\":30"));
+        assertFalse(output.contains("\"age\":\"30\""));
         assertTrue(output.contains("\"city\":\"New York\""));
     }
 
@@ -223,5 +227,99 @@ class FieldValuePairsCliTest {
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"field\":\"value\""));
         assertTrue(output.contains("\"field2\":\"value2\""));
+    }
+
+    @Test
+    void testNumericIntegerValue() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("age=25", "count=100");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Numeric values should not have quotes
+        assertTrue(output.contains("\"age\":25"));
+        assertFalse(output.contains("\"age\":\"25\""));
+        assertTrue(output.contains("\"count\":100"));
+        assertFalse(output.contains("\"count\":\"100\""));
+    }
+
+    @Test
+    void testNumericDecimalValue() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("price=19.99", "temperature=-5.5");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Decimal values should not have quotes
+        assertTrue(output.contains("\"price\":19.99"));
+        assertFalse(output.contains("\"price\":\"19.99\""));
+        assertTrue(output.contains("\"temperature\":-5.5"));
+    }
+
+    @Test
+    void testQuotedNumericValue() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("code=\"123\"", "id='456'");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Quoted numeric values should remain as strings
+        assertTrue(output.contains("\"code\":\"123\""));
+        assertTrue(output.contains("\"id\":\"456\""));
+    }
+
+    @Test
+    void testMixedNumericAndStringValues() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("name=John", "age=30", "price=19.99", "city=New York");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // String values should have quotes
+        assertTrue(output.contains("\"name\":\"John\""));
+        assertTrue(output.contains("\"city\":\"New York\""));
+        // Numeric values should not have quotes
+        assertTrue(output.contains("\"age\":30"));
+        assertFalse(output.contains("\"age\":\"30\""));
+        assertTrue(output.contains("\"price\":19.99"));
+        assertFalse(output.contains("\"price\":\"19.99\""));
+    }
+
+    @Test
+    void testNegativeNumbers() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("temperature=-10", "balance=-123.45");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Negative numbers should not have quotes
+        assertTrue(output.contains("\"temperature\":-10"));
+        assertTrue(output.contains("\"balance\":-123.45"));
+    }
+
+    @Test
+    void testLargeInteger() {
+        FieldValuePairsCli cli = new FieldValuePairsCli();
+        CommandLine cmd = new CommandLine(cli);
+        
+        int exitCode = cmd.execute("small=100", "large=3000000000");
+        
+        assertEquals(0, exitCode);
+        String output = outContent.toString().trim();
+        // Both should be numeric (without quotes)
+        assertTrue(output.contains("\"small\":100"));
+        assertTrue(output.contains("\"large\":3000000000"));
+        assertFalse(output.contains("\"small\":\"100\""));
+        assertFalse(output.contains("\"large\":\"3000000000\""));
     }
 }

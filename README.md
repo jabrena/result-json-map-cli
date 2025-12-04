@@ -64,6 +64,21 @@ Values containing spaces are supported:
 java -jar target/result-json-map-cli.jar name="John Doe" email=john@example.com
 ```
 
+### Numeric Values
+
+Numeric values (integers and decimals) are automatically detected and output without quotes. If you want a numeric value to be treated as a string, wrap it in quotes:
+
+```bash
+java -jar target/result-json-map-cli.jar age=30 price=19.99 code="123"
+```
+
+Output:
+```xml
+<result>{"age":30,"price":19.99,"code":"123"}</result>
+```
+
+Notice that `age` and `price` are numeric (without quotes), while `code` is a string (with quotes) because it was quoted in the input.
+
 ### Help and Version
 
 ```bash
@@ -108,6 +123,17 @@ Output:
 ```xml
 <result>{"name":"Bob","city":"San Francisco"}</result>
 ```
+
+### Example 4: Numeric values
+```bash
+java -jar target/result-json-map-cli.jar name=Alice age=25 price=19.99 balance=-100.50
+```
+Output:
+```xml
+<result>{"name":"Alice","age":25,"price":19.99,"balance":-100.5}</result>
+```
+
+Notice that numeric values (`age`, `price`, `balance`) are output without quotes, while string values (`name`) have quotes.
 
 ## Error Handling
 

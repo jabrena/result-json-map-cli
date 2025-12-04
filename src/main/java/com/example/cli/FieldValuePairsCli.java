@@ -35,7 +35,7 @@ public class FieldValuePairsCli implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
-            Map<String, String> fieldValueMap = parsePairs();
+            Map<String, Object> fieldValueMap = parsePairs();
             String jsonOutput = convertToJson(fieldValueMap);
             String result = wrapInResultTag(jsonOutput);
             System.out.println(result);
@@ -46,8 +46,8 @@ public class FieldValuePairsCli implements Callable<Integer> {
         }
     }
 
-    private Map<String, String> parsePairs() {
-        Map<String, String> map = new HashMap<>();
+    private Map<String, Object> parsePairs() {
+        Map<String, Object> map = new HashMap<>();
         
         for (String pair : pairs) {
             String[] parts;
@@ -76,13 +76,46 @@ public class FieldValuePairsCli implements Callable<Integer> {
                 throw new IllegalArgumentException("Field name cannot be empty in pair: '" + pair + "'");
             }
             
-            map.put(field, value);
+            Object parsedValue = parseValue(value);
+            map.put(field, parsedValue);
         }
         
         return map;
     }
 
-    private String convertToJson(Map<String, String> map) throws Exception {
+    private Object parseValue(String value) {
+        // Check if value is quoted (starts and ends with quotes)
+        if ((value.startsWith("\"") && value.endsWith("\"")) || 
+            (value.startsWith("'") && value.endsWith("'"))) {
+            // Remove quotes and treat as string
+            return value.substring(1, value.length() - 1);
+        }
+        
+        // Try to parse as integer
+        try {
+            // Check if it's a valid integer (no decimal point)
+            if (!value.contains(".") && !value.contains("e") && !value.contains("E")) {
+                long longValue = Long.parseLong(value);
+                // If it fits in int range, return Integer, otherwise Long
+                if (longValue >= Integer.MIN_VALUE && longValue <= Integer.MAX_VALUE) {
+                    return (int) longValue;
+                }
+                return longValue;
+            }
+        } catch (NumberFormatException e) {
+            // Not an integer, continue to try double
+        }
+        
+        // Try to parse as double
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            // Not a number, treat as string
+            return value;
+        }
+    }
+
+    private String convertToJson(Map<String, Object> map) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(map);
     }
