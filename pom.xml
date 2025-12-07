@@ -92,6 +92,7 @@
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/versions/**</exclude>
                                         <exclude>META-INF.versions.**</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
