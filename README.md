@@ -1,6 +1,6 @@
 # Result to JSON map CLI
 
-A CLI tool designed to help models when they return data in an structured way.
+A CLI tool designed to help models when they return data in a structured way.
 
 ```bash
 <result>{“field”: “value”, “field2”: “value2”,…}</result>
