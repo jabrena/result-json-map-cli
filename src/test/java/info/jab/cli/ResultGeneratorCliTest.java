@@ -37,9 +37,9 @@ class ResultGeneratorCliTest {
     void testSingleFieldValuePair() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("name=John");
-        
+
+        int exitCode = cmd.execute("--build", "name=John");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.startsWith("<result>"));
@@ -51,9 +51,9 @@ class ResultGeneratorCliTest {
     void testMultipleFieldValuePairs() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("field=value", "field2=value2", "field3=value3");
-        
+
+        int exitCode = cmd.execute("--build", "field=value", "field2=value2", "field3=value3");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.startsWith("<result>"));
@@ -67,9 +67,9 @@ class ResultGeneratorCliTest {
     void testColonDelimiter() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("name:John", "age:30");
-        
+
+        int exitCode = cmd.execute("--build", "name:John", "age:30");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John\""));
@@ -82,9 +82,9 @@ class ResultGeneratorCliTest {
     void testMixedDelimiters() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("name=John", "age:30", "city=New York");
-        
+
+        int exitCode = cmd.execute("--build", "name=John", "age:30", "city=New York");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John\""));
@@ -98,9 +98,9 @@ class ResultGeneratorCliTest {
     void testValueWithSpaces() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("name=John Doe", "city=New York");
-        
+
+        int exitCode = cmd.execute("--build", "name=John Doe", "city=New York");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John Doe\""));
@@ -111,9 +111,9 @@ class ResultGeneratorCliTest {
     void testValueWithSpecialCharacters() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("email=user@example.com", "path=/home/user/file.txt");
-        
+
+        int exitCode = cmd.execute("--build", "email=user@example.com", "path=/home/user/file.txt");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"email\":\"user@example.com\""));
@@ -124,9 +124,9 @@ class ResultGeneratorCliTest {
     void testEmptyValue() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("field=");
-        
+
+        int exitCode = cmd.execute("--build", "field=");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"field\":\"\""));
@@ -136,22 +136,23 @@ class ResultGeneratorCliTest {
     void testInvalidPairFormat() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("invalidpair");
-        
+
+        // Single argument without delimiter is treated as alternating pairs, which requires at least 2 arguments
+        int exitCode = cmd.execute("--build", "invalidpair");
+
         assertEquals(1, exitCode);
         String errorOutput = errContent.toString();
         assertTrue(errorOutput.contains("Error"));
-        assertTrue(errorOutput.contains("Invalid pair format"));
+        assertTrue(errorOutput.contains("Invalid number of arguments") || errorOutput.contains("Invalid pair format"));
     }
 
     @Test
     void testEmptyFieldName() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("=value");
-        
+
+        int exitCode = cmd.execute("--build", "=value");
+
         assertEquals(1, exitCode);
         String errorOutput = errContent.toString();
         assertTrue(errorOutput.contains("Error"));
@@ -162,22 +163,22 @@ class ResultGeneratorCliTest {
     void testHelpOption() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
+
         int exitCode = cmd.execute("--help");
-        
+
         assertEquals(0, exitCode);
         String output = outContent.toString();
         assertTrue(output.contains("Usage:"));
-        assertTrue(output.contains("field-value-cli"));
+        assertTrue(output.contains("result-json-map"));
     }
 
     @Test
     void testVersionOption() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
+
         int exitCode = cmd.execute("--version");
-        
+
         assertEquals(0, exitCode);
         String output = outContent.toString();
         assertTrue(output.contains("0.1.0-SNAPSHOT"));
@@ -187,9 +188,9 @@ class ResultGeneratorCliTest {
     void testNoArguments() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
+
         int exitCode = cmd.execute();
-        
+
         // Should show help or error
         assertTrue(exitCode != 0 || outContent.toString().contains("Usage:"));
     }
@@ -198,15 +199,15 @@ class ResultGeneratorCliTest {
     void testJsonStructure() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("field=value", "field2=value2");
-        
+
+        int exitCode = cmd.execute("--build", "field=value", "field2=value2");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
-        
+
         // Verify the exact structure: <result>{"field":"value","field2":"value2"}</result>
         assertTrue(output.matches("<result>\\{.*\\}</result>"));
-        
+
         // Verify JSON is valid
         String jsonPart = output.substring(8, output.length() - 9); // Remove <result> and </result>
         assertTrue(jsonPart.startsWith("{"));
@@ -219,9 +220,9 @@ class ResultGeneratorCliTest {
     void testWhitespaceTrimming() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("  field  =  value  ", "  field2  :  value2  ");
-        
+
+        int exitCode = cmd.execute("--build", "  field  =  value  ", "  field2  :  value2  ");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"field\":\"value\""));
@@ -232,9 +233,9 @@ class ResultGeneratorCliTest {
     void testNumericIntegerValue() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("age=25", "count=100");
-        
+
+        int exitCode = cmd.execute("--build", "age=25", "count=100");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Numeric values should not have quotes
@@ -248,9 +249,9 @@ class ResultGeneratorCliTest {
     void testNumericDecimalValue() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("price=19.99", "temperature=-5.5");
-        
+
+        int exitCode = cmd.execute("--build", "price=19.99", "temperature=-5.5");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Decimal values should not have quotes
@@ -263,9 +264,9 @@ class ResultGeneratorCliTest {
     void testQuotedNumericValue() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("code=\"123\"", "id='456'");
-        
+
+        int exitCode = cmd.execute("--build", "code=\"123\"", "id='456'");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Quoted numeric values should remain as strings
@@ -277,9 +278,9 @@ class ResultGeneratorCliTest {
     void testMixedNumericAndStringValues() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("name=John", "age=30", "price=19.99", "city=New York");
-        
+
+        int exitCode = cmd.execute("--build", "name=John", "age=30", "price=19.99", "city=New York");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // String values should have quotes
@@ -296,9 +297,9 @@ class ResultGeneratorCliTest {
     void testNegativeNumbers() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("temperature=-10", "balance=-123.45");
-        
+
+        int exitCode = cmd.execute("--build", "temperature=-10", "balance=-123.45");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Negative numbers should not have quotes
@@ -310,9 +311,9 @@ class ResultGeneratorCliTest {
     void testLargeInteger() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("small=100", "large=3000000000");
-        
+
+        int exitCode = cmd.execute("--build", "small=100", "large=3000000000");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Both should be numeric (without quotes)
@@ -326,9 +327,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandBasic() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "field", "value", "field2", "value2");
-        
+
+        int exitCode = cmd.execute("--build", "field", "value", "field2", "value2");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.startsWith("<result>"));
@@ -341,9 +342,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandWithQuotedFields() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "\"field\"", "30", "\"field2\"", "\"John\"");
-        
+
+        int exitCode = cmd.execute("--build", "\"field\"", "30", "\"field2\"", "\"John\"");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Numeric value should not have quotes
@@ -357,9 +358,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandWithNumericValues() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "age", "25", "price", "19.99", "count", "100");
-        
+
+        int exitCode = cmd.execute("--build", "age", "25", "price", "19.99", "count", "100");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // All numeric values should not have quotes
@@ -375,9 +376,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandWithMixedTypes() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "name", "John", "age", "30", "active", "true");
-        
+
+        int exitCode = cmd.execute("--build", "name", "John", "age", "30", "active", "true");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"John\""));
@@ -391,9 +392,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandWithQuotedStringValues() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "field", "\"John\"", "field2", "30");
-        
+
+        int exitCode = cmd.execute("--build", "field", "\"John\"", "field2", "30");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         // Quoted string should remain as string
@@ -407,9 +408,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandOddNumberOfArguments() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "field", "value", "field2");
-        
+
+        int exitCode = cmd.execute("--build", "field", "value", "field2");
+
         assertEquals(1, exitCode);
         String errorOutput = errContent.toString();
         assertTrue(errorOutput.contains("Error"));
@@ -420,9 +421,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandSinglePair() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "name", "Alice");
-        
+
+        int exitCode = cmd.execute("--build", "name", "Alice");
+
         assertEquals(0, exitCode);
         String output = outContent.toString().trim();
         assertTrue(output.contains("\"name\":\"Alice\""));
@@ -432,9 +433,9 @@ class ResultGeneratorCliTest {
     void testBuildCommandEmptyFieldName() {
         ResultGeneratorCli cli = new ResultGeneratorCli();
         CommandLine cmd = new CommandLine(cli);
-        
-        int exitCode = cmd.execute("build", "\"\"", "value");
-        
+
+        int exitCode = cmd.execute("--build", "\"\"", "value");
+
         assertEquals(1, exitCode);
         String errorOutput = errContent.toString();
         assertTrue(errorOutput.contains("Error"));
