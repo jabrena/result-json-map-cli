@@ -16,11 +16,11 @@
     <properties>
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <picocli.version>4.7.5</picocli.version>
+        <picocli.version>4.7.7</picocli.version>
         <junit.version>5.10.1</junit.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>3.2.2</maven.surefire.plugin.version>
-        <maven.shade.plugin.version>3.5.1</maven.shade.plugin.version>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <maven.shade.plugin.version>3.6.1</maven.shade.plugin.version>
         <maven-plugin-versions.version>2.19.1</maven-plugin-versions.version>
     </properties>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.16.1</version>
+            <version>2.20.1</version>
         </dependency>
 
         <!-- JUnit 5 for testing -->
