@@ -1,0 +1,84 @@
+name: CI Builds
+
+on: [push]
+
+jobs:
+  run:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true  # Fetches all submodules
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'graalvm' # See 'Supported distributions' for available options
+          java-version: '25'
+      - name: Maven build
+        run: ./mvnw --batch-mode --no-transfer-progress clean package --file pom.xml
+
+      - name: Get Maven project version
+        id: get_version
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: E2E Tests
+        run: |
+          JAR_PATH="target/result-json-map-${{ steps.get_version.outputs.VERSION }}.jar"
+
+          echo "Testing --help option"
+          java -jar $JAR_PATH --help | grep -q "Usage:" || exit 1
+
+          echo "Testing delimited pairs with ="
+          OUTPUT=$(java -jar $JAR_PATH --build field=value field2=value2)
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"field":"value"' || exit 1
+          echo "$OUTPUT" | grep -q '"field2":"value2"' || exit 1
+
+          echo "Testing delimited pairs with :"
+          OUTPUT=$(java -jar $JAR_PATH --build field:value field2:value2)
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"field":"value"' || exit 1
+
+          echo "Testing alternating pairs"
+          OUTPUT=$(java -jar $JAR_PATH --build "field" 30 "field2" "John")
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"field":30' || exit 1
+          echo "$OUTPUT" | grep -q '"field2":"John"' || exit 1
+
+          echo "Testing quoted values with spaces"
+          OUTPUT=$(java -jar $JAR_PATH --build name="John Doe" email="john@example.com")
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"name":"John Doe"' || exit 1
+          echo "$OUTPUT" | grep -q '"email":"john@example.com"' || exit 1
+
+          echo "Testing numeric values"
+          OUTPUT=$(java -jar $JAR_PATH --build age=30 price=19.99 code="123")
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"age":30' || exit 1
+          echo "$OUTPUT" | grep -q '"price":19.99' || exit 1
+          echo "$OUTPUT" | grep -q '"code":123' || exit 1
+
+          echo "Testing empty value"
+          OUTPUT=$(java -jar $JAR_PATH --build name=)
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"name":""' || exit 1
+
+          echo "Testing single alternating pair"
+          OUTPUT=$(java -jar $JAR_PATH --build name "Alice")
+          echo "$OUTPUT" | grep -q '<result>' || exit 1
+          echo "$OUTPUT" | grep -q '"name":"Alice"' || exit 1
+
+          echo "Testing error handling - invalid format"
+          java -jar $JAR_PATH --build invalidpair 2>&1 | grep -q "Error" || exit 1
+
+          echo "Testing error handling - empty field name"
+          java -jar $JAR_PATH --build =value 2>&1 | grep -q "Error" || exit 1
+
+          echo "All E2E tests passed!"
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v5
+        with:
+          name: result-json-map-${{ steps.get_version.outputs.VERSION }}.jar
+          path: |
+            ./target/result-json-map-${{ steps.get_version.outputs.VERSION }}.jar

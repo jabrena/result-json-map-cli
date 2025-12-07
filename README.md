@@ -1,2 +1,25 @@
-# result-json-map-cli
-&lt;result>{“field”: “value”, “field2”: “value2”,…}&lt;/result>
+# result-json-map-cli
+
+```bash
+<result>{“field”: “value”, “field2”: “value2”,…}</result>
+```
+
+## Hot to build?
+
+```bash
+./mvnw clean package
+```
+
+## Usage
+
+```bash
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --help
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build field=value field2=value2
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build field:value field2:value2
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build "field" 30 "field2" "John"
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build name="John Doe" email="john@example.com"
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build age=30 price=19.99 code="123"
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build name=
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build name
+java -jar target/result-json-map-0.1.0-SNAPSHOT.jar --build
+```
