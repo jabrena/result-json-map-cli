@@ -1,4 +1,4 @@
-package com.example.cli;
+package info.jab.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;
@@ -22,7 +22,7 @@ public class ResultGeneratorCli implements Callable<Integer> {
     @Parameters(
         index = "0..*",
         description = "Field-value pairs in the format 'field=value' or 'field:value'",
-        arity = "1..*"
+        arity = "0..*"
     )
     private String[] pairs;
 
@@ -36,6 +36,10 @@ public class ResultGeneratorCli implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
+            if (pairs == null || pairs.length == 0) {
+                CommandLine.usage(this, System.out);
+                return 0;
+            }
             Map<String, Object> fieldValueMap = parsePairs();
             String jsonOutput = convertToJson(fieldValueMap);
             String result = wrapInResultTag(jsonOutput);
@@ -49,6 +53,10 @@ public class ResultGeneratorCli implements Callable<Integer> {
 
     private Map<String, Object> parsePairs() {
         Map<String, Object> map = new HashMap<>();
+        
+        if (pairs == null || pairs.length == 0) {
+            return map;
+        }
         
         for (String pair : pairs) {
             String[] parts;
@@ -137,16 +145,17 @@ public class ResultGeneratorCli implements Callable<Integer> {
 )
 class BuildCommand implements Callable<Integer> {
 
-    @Parameters(
-        index = "0..*",
-        description = "Alternating field names and values: field1 value1 field2 value2 ...",
-        arity = "2..*"
-    )
-    private String[] args;
+    @Parameters(arity = "0..*")
+    private String[] args = new String[0];
 
     @Override
     public Integer call() {
         try {
+            if (args == null || args.length < 2) {
+                throw new IllegalArgumentException(
+                    "Invalid number of arguments. Expected at least 2 arguments (field-value pairs)."
+                );
+            }
             if (args.length % 2 != 0) {
                 throw new IllegalArgumentException(
                     "Invalid number of arguments. Expected even number of arguments (field-value pairs)."

@@ -1,4 +1,4 @@
-package com.example.cli;
+package info.jab.cli;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +7,6 @@ import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
